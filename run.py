@@ -262,18 +262,18 @@ if __name__ == "__main__":
     from pytorch_lightning.loggers import NeptuneLogger
     import argparse
 
-    # read config file
+    # get config file name
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--config-file', '-c', type=str, required=True, help='Config file'
     )
     args = parser.parse_args()
-
-    # set up neptune logger
+    # load config file
     with open(args.config_file, 'r') as stream:
         PARAMS = yaml.safe_load(stream)
         print(PARAMS)
 
+    # set up neptune logger
     neptune_logger = NeptuneLogger(
             project=PARAMS['logger']['project'],
             # with_id="AIS-113",

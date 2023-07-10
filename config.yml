@@ -21,7 +21,7 @@ dataset_settings:
 training_settings: 
   gpu_ids: [0]
   n_gpu: 1
-  loss: ce
+  loss: bce
   metric: accuracy
   n_epoch: 5
   n_batch: 64
