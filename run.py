@@ -165,7 +165,6 @@ def get_trainer(settings, logger) -> Trainer:
     trainer = Trainer(
         logger=[logger],
         max_epochs=settings['n_epoch'],
-        default_root_dir=settings['ckpt_path'],
         accelerator=accelerator,
         devices=devices,
         strategy=strategy,
@@ -244,7 +243,7 @@ class Model(LightningModule):
         reconstructions = torch.stack([F.interpolate(img.unsqueeze(0), size=(128, 128))
                                         for img in reconstructions]).squeeze(1)       
         reconstructions = make_grid(reconstructions, nrow= int(self.train_settings['n_batch'] ** 0.5))
-        reconstructions = reconstructions.numpy().transpose(1, 2, 0) / 255
+        reconstructions = reconstructions.numpy().transpose(1, 2, 0)
         # Log images and clear buffer
         self.logger.experiment["val/reconstructions"].append(File.as_image(reconstructions))
         self.validation_step_outputs.clear()
@@ -292,15 +291,19 @@ if __name__ == "__main__":
     batch_size = training_settings['n_batch']
     num_workers = training_settings['num_workers']
 
-    # load dataset
+    # load Train dataset
     train_data = LungCTscan(mode="train", data_path=root_dir, imgsize=img_size)
     # Create data loader
     train_data_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    # Load Validation dataset
+    val_data = LungCTscan(mode="val", data_path=root_dir, imgsize=img_size)
+    # Create data loader
+    val_data_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
     # create model
     model = Model(PARAMS=PARAMS)
 
     # get the trainer and fit model
     trainer = get_trainer(PARAMS['training_settings'], neptune_logger)
-    trainer.fit(model, train_data_loader)
+    trainer.fit(model, train_data_loader, val_data_loader)
   

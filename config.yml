@@ -6,24 +6,25 @@ architect_settings:
   n_filters: 4
   n_layers: 4
   channel: 3
+  n_cls: 2
   conv:
     k: 3
-    s: 1
+    s: 2
     p: 1
   transpose_conv:
     k: 3
-    s: 1
+    s: 2
     p: 1
 dataset_settings:
-  name: CIFAR10
-  path: data/
+  name: Lung-CT-Scan
+  path: data/CT-scan-dataset
   img_size: 224
 training_settings: 
   gpu_ids: [0]
   n_gpu: 1
-  loss: bce
-  metric: accuracy
-  n_epoch: 5
+  loss: ce
+  metric: dice
+  n_epoch: 100
   n_batch: 64
   num_workers: 0
   optimizer: adam
